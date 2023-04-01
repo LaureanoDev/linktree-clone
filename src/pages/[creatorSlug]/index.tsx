@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import Image from "next/image";
-import supabase from "../../utils/supabaseClient";
+import { useRouter } from "next/router";
+import supabase from "../../../utils/supabaseClient";
 
 type Link = {
   title: string;
@@ -18,6 +19,8 @@ export default function Home() {
   const [profilePictureUrl, setProfilePictureUrl] = useState<
     string | undefined
   >();
+  const router = useRouter();
+  const { creatorSlug } = router.query;
 
   const onChange = (imageList: ImageListType) => {
     setImages(imageList);
@@ -60,19 +63,21 @@ export default function Home() {
       try {
         const { data, error } = await supabase
           .from("users")
-          .select("profile_picture_url")
-          .eq("id", userId);
+          .select("id, profile_picture_url")
+          .eq("username", creatorSlug);
         if (error) throw error;
         const profilePictureUrl = data[0]["profile_picture_url"];
+        const userId = data[0]["id"];
         setProfilePictureUrl(profilePictureUrl);
+        setUserId(userId);
       } catch (error) {
         console.log("error: ", error);
       }
     };
-    if (userId) {
+    if (creatorSlug) {
       getUser();
     }
-  }, [userId]);
+  }, [creatorSlug]);
 
   const addNewLink = async () => {
     try {

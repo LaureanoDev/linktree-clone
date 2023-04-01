@@ -4,6 +4,7 @@ import supabase from "../../utils/supabaseClient";
 export default function SignUp() {
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
+  const [username, setUsername] = useState<string | undefined>();
 
   async function signUpWithEmail() {
     try {
@@ -26,7 +27,7 @@ export default function SignUp() {
     try {
       const { error } = await supabase
         .from("users")
-        .insert({ id: userId });
+        .insert({ id: userId, username: username });
       if (error) throw error;
     } catch (error) {
       console.log("error: ", error);
@@ -68,6 +69,23 @@ export default function SignUp() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+      </div>
+
+      <label
+        htmlFor="username"
+        className="block text-sm font-medium text-gray-700 mt-4"
+      >
+        username
+      </label>
+      <div className="mt-1">
+        <input
+          type="text"
+          name="username"
+          id="username"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+          placeholder="username"
+          onChange={(e) => setUsername(e.target.value)}
+        />
       </div>
       <button
         type="button"
